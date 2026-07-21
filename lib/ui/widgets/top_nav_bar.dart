@@ -19,9 +19,16 @@ class TopNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.sizeOf(context).width;
+    
+    // Breakpoints for responsiveness to avoid RenderFlex overflow on small screens
+    final bool showBrand = screenWidth > 550;
+    final bool showAspectRatioLabel = screenWidth > 460;
+    final bool showExportLabel = screenWidth > 400;
+
     return Container(
       height: 54,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: const BoxDecoration(
         color: AppTheme.bgCard,
         border: Border(bottom: BorderSide(color: AppTheme.dividerColor, width: 1)),
@@ -30,6 +37,7 @@ class TopNavBar extends StatelessWidget {
         children: [
           // App Brand & Logo
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 padding: const EdgeInsets.all(6),
@@ -41,33 +49,35 @@ class TopNavBar extends StatelessWidget {
                 ),
                 child: const Icon(Icons.movie_filter, size: 20, color: Colors.white),
               ),
-              const SizedBox(width: 8),
-              const Text(
-                'nscut',
-                style: TextStyle(
-                  color: AppTheme.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentPrimary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: AppTheme.accentPrimary.withValues(alpha: 0.5)),
-                ),
-                child: const Text(
-                  'PRO',
+              if (showBrand) ...[
+                const SizedBox(width: 8),
+                const Text(
+                  'nscut',
                   style: TextStyle(
-                    color: AppTheme.accentSecondary,
-                    fontSize: 10,
+                    color: AppTheme.textPrimary,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
                   ),
                 ),
-              ),
+                const SizedBox(width: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentPrimary.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: AppTheme.accentPrimary.withValues(alpha: 0.5)),
+                  ),
+                  child: const Text(
+                    'PRO',
+                    style: TextStyle(
+                      color: AppTheme.accentSecondary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
 
@@ -82,20 +92,23 @@ class TopNavBar extends StatelessWidget {
               visualDensity: VisualDensity.compact,
             ),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               decoration: BoxDecoration(
                 color: AppTheme.bgSurface,
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: AppTheme.borderDark),
               ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.aspect_ratio, size: 16, color: AppTheme.accentSecondary),
-                  const SizedBox(width: 6),
-                  Text(
-                    timeline.aspectRatio.label,
-                    style: const TextStyle(fontSize: 12, color: AppTheme.textPrimary),
-                  ),
+                  if (showAspectRatioLabel) ...[
+                    const SizedBox(width: 6),
+                    Text(
+                      timeline.aspectRatio.label,
+                      style: const TextStyle(fontSize: 12, color: AppTheme.textPrimary),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -127,35 +140,58 @@ class TopNavBar extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
 
           // Undo / Redo
           IconButton(
-            icon: const Icon(Icons.undo, size: 20),
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.undo, size: 18),
             color: timeline.canUndo ? AppTheme.textPrimary : AppTheme.textMuted,
             onPressed: timeline.canUndo ? () => timeline.undo() : null,
             tooltip: 'Undo',
           ),
+          const SizedBox(width: 4),
           IconButton(
-            icon: const Icon(Icons.redo, size: 20),
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.redo, size: 18),
             color: timeline.canRedo ? AppTheme.textPrimary : AppTheme.textMuted,
             onPressed: timeline.canRedo ? () => timeline.redo() : null,
             tooltip: 'Redo',
           ),
 
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
 
           // Export Button
-          ElevatedButton.icon(
+          ElevatedButton(
             onPressed: () => timeline.setActiveModule('export'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.accentPrimary,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.symmetric(
+                horizontal: showExportLabel ? 12 : 8,
+                vertical: 8,
+              ),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            icon: const Icon(Icons.ios_share, size: 16),
-            label: const Text('Export', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.ios_share, size: 16),
+                if (showExportLabel) ...[
+                  const SizedBox(width: 6),
+                  const Text(
+                    'Export',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
       ),

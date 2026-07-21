@@ -173,7 +173,7 @@ class BottomToolBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, size: 18, color: isActive ? color : AppTheme.textSecondary),
-              const SizedBox(height: 2),
+              const SizedBox(height: 1),
               Text(
                 label,
                 maxLines: 1,
