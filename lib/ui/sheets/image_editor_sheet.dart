@@ -3,6 +3,7 @@ import '../../core/models/timeline.dart';
 import '../../core/models/layer.dart';
 import '../../core/models/media_item.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/services/media_picker_service.dart';
 
 class ImageEditorSheet extends StatelessWidget {
   final TimelineState timeline;
@@ -18,7 +19,7 @@ class ImageEditorSheet extends StatelessWidget {
     final isImage = layer != null && layer.type == MediaType.image;
 
     return Container(
-      height: 270,
+      height: 310,
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
         color: AppTheme.bgCard,
@@ -92,9 +93,31 @@ class ImageEditorSheet extends StatelessWidget {
               ],
             ),
           ] else ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.layerImage,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    onPressed: () => MediaPickerService.pickMedia(
+                      context, 
+                      timeline, 
+                      filterType: MediaType.image
+                    ),
+                    icon: const Icon(Icons.add_photo_alternate_outlined, size: 16),
+                    label: const Text('Import Image from Gallery', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 12),
-            const Text('Add Image Overlay to Timeline:', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
-            const SizedBox(height: 16),
+            const Text('Or select a template overlay:', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+            const SizedBox(height: 8),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

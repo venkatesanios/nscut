@@ -4,10 +4,12 @@ import '../../core/theme/app_theme.dart';
 
 class TopNavBar extends StatelessWidget {
   final TimelineState timeline;
+  final VoidCallback? onMenuPressed;
 
   const TopNavBar({
     super.key,
     required this.timeline,
+    this.onMenuPressed,
   });
 
   String _formatTimestamp(double seconds) {
@@ -28,13 +30,20 @@ class TopNavBar extends StatelessWidget {
 
     return Container(
       height: 54,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       decoration: const BoxDecoration(
         color: AppTheme.bgCard,
         border: Border(bottom: BorderSide(color: AppTheme.dividerColor, width: 1)),
       ),
       child: Row(
         children: [
+          // Hamburger Menu
+          IconButton(
+            icon: const Icon(Icons.menu, color: AppTheme.textPrimary, size: 22),
+            onPressed: onMenuPressed,
+            tooltip: 'Menu',
+          ),
+
           // App Brand & Logo
           Row(
             mainAxisSize: MainAxisSize.min,

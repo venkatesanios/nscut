@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../core/models/timeline.dart';
 import '../../core/models/layer.dart';
+import '../../core/models/media_item.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/services/media_picker_service.dart';
 
 class VideoEditorSheet extends StatelessWidget {
   final TimelineState timeline;
@@ -15,14 +17,38 @@ class VideoEditorSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final layer = timeline.selectedLayer;
 
-    if (layer == null) {
+    if (layer == null || layer.type != MediaType.video) {
       return Container(
         height: 180,
         padding: const EdgeInsets.all(20),
-        alignment: Alignment.center,
-        child: const Text(
-          'Select a video layer on the timeline to edit properties.',
-          style: TextStyle(color: AppTheme.textSecondary),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Select a video layer on the timeline to edit properties.',
+              style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.layerVideo,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+              onPressed: () => MediaPickerService.pickMedia(
+                context, 
+                timeline, 
+                filterType: MediaType.video
+              ),
+              icon: const Icon(Icons.video_collection),
+              label: const Text(
+                'Import Video from Gallery',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -73,13 +99,9 @@ class VideoEditorSheet extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  // Tab 1: Speed Ramps & Duration
                   _buildSpeedAndTrimTab(layer, timeline),
-                  // Tab 2: LUT Filters
                   _buildLutFiltersTab(layer, timeline),
-                  // Tab 3: Color Adjustments
                   _buildColorAdjustTab(layer, timeline),
-                  // Tab 4: Transitions
                   _buildTransitionsTab(layer, timeline),
                 ],
               ),

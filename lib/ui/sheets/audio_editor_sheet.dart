@@ -4,6 +4,7 @@ import '../../core/models/layer.dart';
 import '../../core/models/media_item.dart';
 import '../../core/theme/app_theme.dart';
 import '../../engine/audio_editing_engine.dart';
+import '../../core/services/media_picker_service.dart';
 
 class AudioEditorSheet extends StatefulWidget {
   final TimelineState timeline;
@@ -27,7 +28,7 @@ class _AudioEditorSheetState extends State<AudioEditorSheet> {
     final isAudioSelected = selectedLayer != null && selectedLayer.type == MediaType.audio;
 
     return Container(
-      height: 300,
+      height: 330,
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
         color: AppTheme.bgCard,
@@ -122,8 +123,24 @@ class _AudioEditorSheetState extends State<AudioEditorSheet> {
           ] else ...[
             // Add Audio Track Options
             const SizedBox(height: 12),
-            const Text('Add Soundtrack to Project:', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.layerAudio,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                minimumSize: const Size(double.infinity, 40),
+              ),
+              onPressed: () => MediaPickerService.pickMedia(
+                context, 
+                timeline, 
+                filterType: MediaType.audio
+              ),
+              icon: const Icon(Icons.library_music_outlined, size: 16),
+              label: const Text('Import Audio from Gallery', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
             const SizedBox(height: 12),
+            const Text('Or add soundtrack template:', style: TextStyle(fontSize: 11, color: AppTheme.textSecondary)),
+            const SizedBox(height: 8),
 
             Expanded(
               child: ListView(

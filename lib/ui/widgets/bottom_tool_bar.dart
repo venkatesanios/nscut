@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/models/timeline.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/services/media_picker_service.dart';
 
 class BottomToolBar extends StatelessWidget {
   final TimelineState timeline;
@@ -69,13 +70,14 @@ class BottomToolBar extends StatelessWidget {
               ),
             ),
 
-          // Main 8 Modules Selector Row
+          // Main Modules Selector Row
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
                 children: [
+                  _buildImportButton(context),
                   _buildToolButton(
                     context: context,
                     id: 'video',
@@ -132,6 +134,13 @@ class BottomToolBar extends StatelessWidget {
                     icon: Icons.file_upload_outlined,
                     color: AppTheme.accentSecondary,
                   ),
+                  _buildToolButton(
+                    context: context,
+                    id: 'about',
+                    label: 'About',
+                    icon: Icons.info_outline,
+                    color: AppTheme.accentGold,
+                  ),
                 ],
               ),
             ),
@@ -182,6 +191,46 @@ class BottomToolBar extends StatelessWidget {
                   fontSize: 9,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                   color: isActive ? color : AppTheme.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImportButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: InkWell(
+        onTap: () => MediaPickerService.pickMedia(context, timeline),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: 68,
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            color: AppTheme.accentSecondary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: AppTheme.accentSecondary.withValues(alpha: 0.5),
+              width: 1.0,
+            ),
+          ),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add_to_photos_outlined, size: 18, color: AppTheme.accentSecondary),
+              SizedBox(height: 1),
+              Text(
+                'Import',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.accentSecondary,
                 ),
               ),
             ],
